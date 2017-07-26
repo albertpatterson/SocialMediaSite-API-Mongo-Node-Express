@@ -1,0 +1,15 @@
+<form class="form-group" #postForm="ngForm" (ngSubmit)="submitPost()">
+    <label for="postContainer">{{label}}</label>
+    <textarea
+            class="form-control" 
+            [(ngModel)]="postContent"
+            name="postContent" 
+            id="postContainer"
+            [rows]="rows" 
+            required 
+            #postContentInput="ngModel"></textarea>
+    <button type="submit" 
+            id="submitPost" 
+            class="btn btn-primary centered" 
+            [disabled]="!postForm.valid">Submit</button>
+</form>

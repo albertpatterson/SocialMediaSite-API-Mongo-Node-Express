@@ -1,0 +1,14 @@
+#postForm {
+    width: 90%;
+    margin: auto;
+}
+
+.posts{
+    width: 100%;
+    margin-top: 25px;
+}
+
+#addContent{
+    display: block;
+    margin: 0 auto;
+}

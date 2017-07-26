@@ -1,0 +1,110 @@
+/* .ad {
+    background-color: grey;
+    color: white;
+    height: 100px;
+} */
+
+.contentItem{
+    background-color: green;
+    border: 5px solid black;
+}
+
+div.placeHolder100 {
+    height: 100px;
+}
+
+div.placeHolder150 {
+    height: 150px;
+}
+
+.navButton {
+    padding: 10px 0px;
+}
+
+.interactBtn {
+    padding: 10px 0px;
+    width: 50%;
+}
+
+/* .picture {
+    height: 500px;
+    max-width: 100%;
+} */
+
+.nameText {
+    margin-top: 70px;
+    font-size: 70px;
+}
+
+.infoText {
+    font-size: 36px
+}
+
+/* .centered {
+    display: block;
+    margin: auto;
+} */
+
+/* .fullwidth {
+    width: 100%;
+} */
+
+#searchField {
+    width: 60%;
+    padding: 9px 0px;
+}
+
+#searchButton {
+    width: 38%;
+    padding: 10px 0px;
+    position: absolute;
+}
+
+#homeButton {
+    width: 18%;
+}
+
+#messagesButton {
+    width: 35%;
+}
+
+#premiumButton {
+    width: 27%;
+}
+
+#signOutButton {
+    width: 20%;
+}
+/* 
+.thumbnail {
+    max-width: 250px;
+    height: auto;
+}
+
+.fullsize {
+    max-height: 500px;
+    max-width: 100%;
+    height: auto;
+}
+
+.floatLeft {
+    float:right;
+}
+
+.overflowHidden {
+    overflow: hidden;
+}
+
+.displayInline {
+    display: inline;
+} */
+
+
+
+/* .centeredText {
+    text-align: center;
+}
+
+.large {
+    width: 90%
+} */

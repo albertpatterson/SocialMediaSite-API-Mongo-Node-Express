@@ -1,0 +1,94 @@
+<div class="signUpFormContainer">
+    <form #signUpForm="ngForm" 
+            (ngSubmit)="signUp()">
+        <!--username-->
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input  type="text" 
+                    class="form-control" 
+                    id="username" 
+                    required 
+                    [(ngModel)]="username" 
+                    name="username" 
+                    #usernameInput="ngModel" 
+                    pattern={{usernamePattern}}>
+            <div  [hidden]="usernameInput.valid&&!usernameInput.pristine" 
+                    class="alert alert-danger">{{usernameDiagnostic}}</div>                
+        </div>
+        <!--password-->
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input  type="password" 
+                    class="form-control" 
+                    name="password" 
+                    id="password" 
+                    required 
+                    [(ngModel)]="password" 
+                    #passwordInput = "ngModel"
+                    pattern={{passwordPattern}}>
+            <div  [hidden]="passwordInput.valid&&!passwordInput.pristine" 
+                    class="alert alert-danger">{{passwordDiagnostic}}</div>
+            </div>
+        <!--Location-->
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input  type="text" 
+                    class="form-control" 
+                    name="location" 
+                    id="location" 
+                    required 
+                    [(ngModel)]="location" 
+                    #locationInput = "ngModel"
+                    pattern={{locationPattern}}>
+            <div  [hidden]="locationInput.valid&&!locationInput.pristine" 
+                    class="alert alert-danger">{{locationDiagnostic}}</div>
+        </div>
+        <!--Date of birth-->
+        <div class="form-group">
+            <label for="DOB">Date of Birth</label>
+            <input  type="date" 
+                    class="form-control" 
+                    name="DOB" 
+                    id="DOB" 
+                    required 
+                    [(ngModel)]="DOB" 
+                    #DOBInput = "ngModel" 
+                    [max]="DOBMax">
+            <div  [hidden]="DOBInput.valid&&!DOBInput.pristine" 
+                    class="alert alert-danger">{{DOBDiagnostic}}</div>
+            </div>          
+        <!--Business-->
+        <div class="form-group">
+            <label for="business">Business</label>
+            <input  type="text" 
+                    class="form-control" 
+                    name="business" 
+                    id="business" 
+                    required 
+                    [(ngModel)]="business" 
+                    #businessInput = "ngModel"
+                    pattern={{businessPattern}}>
+            <div  [hidden]="businessInput.valid&&!businessInput.pristine" 
+                    class="alert alert-danger">{{businessDiagnostic}}</div>
+        </div>
+        <!--Picture-->
+        <div class="form-group">
+            <label for="picture">Picture</label>
+            <input  type="file" 
+                    class="form-control" 
+                    name="picture" 
+                    id="picture" 
+                    required 
+                    accept="image/*" 
+                    (change)="addPicture($event)" 
+                    [class.inputValid]="!!picture" 
+                    [class.inputInvalid]="!picture">
+            <div  [hidden]="!!picture" 
+                    class="alert alert-danger">{{pictureDiagnostic}}</div>
+        </div>                    
+        <!--submit-->
+        <button type="submit" 
+                class="btn btn-success submitButton" 
+                [disabled]="(!signUpForm.valid)||(!picture)">Sign Up</button>
+    </form>        
+</div>

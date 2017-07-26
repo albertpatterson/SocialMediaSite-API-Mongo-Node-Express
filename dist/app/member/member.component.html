@@ -1,0 +1,84 @@
+<div class="container-fluid">
+    
+    <div class="row">
+    
+        <div class="ad col-sm-6" id="ad1">
+            Add 1
+        </div>
+    
+        <div class="ad col-sm-6" id="ad2">
+            Add 2
+        </div>
+    </div>
+    
+    <br>
+    <div    class="row" 
+            id="navigation">
+        
+        <div    id="searchForm" 
+                class="col-sm-4">
+            
+            <div class="fullwidth">
+                
+                <input  type="text" 
+                        id="searchField" 
+                        #searchField 
+                        (keyup.enter)="search(searchField.value)">
+                
+                <button id="searchButton" 
+                        type="submit" 
+                        class="btn btn-success" 
+                        (click)="search(searchField.value)">Search</button>
+            </div>
+        </div>
+        
+        <div class="col-sm-8">
+            <div    class="btn-group fullwidth" 
+                    role="group">
+                
+                <a  id="homeButton" 
+                    class="btn btn-primary navButton" 
+                    (click)="go('home')">home</a>
+                
+                <a  id="messagesButton" 
+                    class="btn btn-primary navButton" 
+                    (click)="go('messages')">
+                    <span   id="messageCount" 
+                            class="badge">{{messageCount}}</span>     messages</a>
+                
+                <a  id="premiumButton" 
+                    class="btn btn-primary navButton" 
+                    (click)="go('premium')">premium</a>
+                
+                <button id="signOutButton" 
+                        class="btn btn-primary navButton" 
+                        (click)="signout()">signout</button>
+            </div>
+        </div>
+    </div>
+    
+    <br>
+    <div class="row" [ngSwitch]="currentPage">
+        
+        <member-home    *ngSwitchCase="'home'" 
+                        [username]="username" 
+                        (userSelect)="goProfile($event)"></member-home>
+        
+        <member-messages    *ngSwitchCase="'messages'" 
+                            [username]="username"
+                            (userSelect)="goProfile($event)"></member-messages>
+        
+        <member-premium     *ngSwitchCase="'premium'" 
+                            [username]="username"
+                            (userSelect)="goProfile($event)"></member-premium>
+        
+        <member-search  *ngSwitchCase="'search'" 
+                        [username]="username" 
+                        [searchPattern]="searchComponentData.searchPattern" 
+                        (userSelect)="goProfile($event)"></member-search>
+        
+        <member-profile *ngSwitchCase="'profile'" 
+                        [username]="username" 
+                        [profileUsername]="profileComponentData.profileUsername"></member-profile>
+    </div>
+</div>

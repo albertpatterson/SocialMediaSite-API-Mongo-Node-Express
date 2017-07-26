@@ -1,0 +1,36 @@
+<div class="signInFormContainer">
+    <form #signInForm="ngForm" 
+            (ngSubmit)="signIn()">
+        <div class="form-group">
+        <label for="username">Username</label>
+        <input  type="text" 
+                class="form-control" 
+                id="username" 
+                required
+                [(ngModel)]="username" 
+                name="username"
+                #usernameInput="ngModel" 
+                pattern={{usernamePattern}}>
+        <div  [hidden]="usernameInput.valid&&!usernameInput.pristine" 
+                class="alert alert-danger">{{usernameDiagnostic}}</div>                
+        </div>
+        <div class="form-group">
+        <label for="password">Password</label>
+        <input  type="password" 
+                class="form-control" 
+                id="password" 
+                required 
+                [(ngModel)]="password" 
+                name="password" 
+                #passwordInput = "ngModel"
+                pattern={{passwordPattern}}>
+        <div  [hidden]="passwordInput.valid&&!passwordInput.pristine" 
+                class="alert alert-danger">{{passwordDiagnostic}}</div>
+        </div>
+        <button type="submit" 
+                class="btn btn-success submitButton" 
+                [disabled]="!signInForm.valid">Sign In</button>
+        <div  [hidden]="!invalidCredentials" 
+            class="alert alert-danger">{{invalidCredentialsDiagnostic}}</div>
+    </form>
+</div>

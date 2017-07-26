@@ -1,0 +1,35 @@
+.postContainer {
+    width: 90%;
+    margin: 25px auto;
+    background-color: #7a8c9b;
+    border-color: black;
+    border-radius: 5px;
+}
+
+.posterName {
+    /*width: 50%;
+    margin: auto;
+    text-align: center;*/
+    padding-left: 5%;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+.timestamp {
+    /*width: 50%;
+    margin: auto;
+    text-align: center;*/
+    font-size: 16px;
+    color: white;
+    padding-left: 2%;
+}
+
+.postContent {
+    width: 95%;
+    margin: auto;
+    text-align: left;
+    font-size: 16px;
+    color: white;
+}
+
