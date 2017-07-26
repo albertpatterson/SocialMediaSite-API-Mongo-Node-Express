@@ -21,8 +21,7 @@ let loginService = {
 router.post("/", function(req, res, next){
     let signInOk = loginService.signIn(req);
     if(signInOk){
-        res.status("201");
-        res.redirect(`/member/${req.body.username}`);
+        res.status("201").end();
     }else{
         res.status("401").end();
     }
