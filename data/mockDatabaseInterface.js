@@ -1,5 +1,5 @@
 const Post = require('./Post');
-const PremiumContent = require('./PremimContent');
+const PremiumContent = require('./PremiumContent');
 
 
 let connected = false;
@@ -39,7 +39,7 @@ class MockDatabaseInterface{
 
         let mockUsernames = ["Anne", "Kim", "Dan", "Bob", "Pam", "Jen"];
 
-        let mockUsername, mockUser;
+        let mockUsername, mockUser, friendOffset, friendIdx, friendName;
 
         const NFRIENDS = 2;
         for(let idx=0; idx<mockUsernames.length; idx++){
@@ -48,17 +48,17 @@ class MockDatabaseInterface{
             mockUser = new MockUser(mockUsername);
             mockUsers[mockUsername] = mockUser;
 
-            addPost(mockUserName, new Post(mockUserName, "Post 1"));
-            addPost(mockUserName, new Post(mockUserName, "Post 2"));
+            this.addPost(mockUsername, new Post(mockUsername, "Post 1"));
+            this.addPost(mockUsername, new Post(mockUsername, "Post 2"));
 
-            addPremium(mockUserName, new PremiumContent(imageInc()));
-            addPremium(mockUserName, new PremiumContent(imageInc()));
+            this.addPremium(mockUsername, new PremiumContent(imageInc()));
+            this.addPremium(mockUsername, new PremiumContent(imageInc()));
 
-            for(friendOffset = 1; friendOffset<=nFriends; friendOffset++){
-                friendIdx = (idx + friendOffset) % mockUserNames.length();
-                friendName = mockUserNames[friendIdx];
-                addMessage(mockUserName, new Post(friendName, "Post from friend"));
-                addSubscription(mockUserName, friendName);
+            for(friendOffset = 1; friendOffset<=NFRIENDS; friendOffset++){
+                friendIdx = (idx + friendOffset) % mockUsernames.length;
+                friendName = mockUsernames[friendIdx];
+                this.addMessage(mockUsername, new Post(friendName, "Post from friend"));
+                this.addSubscription(mockUsername, friendName);
             }
         }
     }    
@@ -72,6 +72,8 @@ class MockDatabaseInterface{
     checkUser(username){}
 
     assertUserExists(username){
+        console.log('assert ', username);
+
         if(!mockUsers.hasOwnProperty(username)){
             throw new Error(`user "${username}" does not exist`);
         }
@@ -85,7 +87,10 @@ class MockDatabaseInterface{
 
     setPersonalData(username, personalData){}
 
-    getPassword(username){}
+    getPassword(username){
+        this.assertUserExists(username);
+        return mockUsers[username].password;
+    }
 
     setPassword(username, password){}
 
@@ -117,15 +122,15 @@ class MockDatabaseInterface{
 
     addSubscription(username, followee){
         this.assertUserExists(username);
-        if(getFolloweeIndex(username, followee)==-1){
-            userData[username].following.push(followee);
+        if(this.getFolloweeIndex(username, followee)==-1){
+            mockUsers[username].following.push(followee);
         }
     }
 
     deleteSubscription(username, followee){}
 
     getFolloweeIndex(username, followee){
-        return userData[username].following.indexOf(followee);
+        return mockUsers[username].following.indexOf(followee);
     }
 
     addFollowee(followeeUsername, followerUsername){}
