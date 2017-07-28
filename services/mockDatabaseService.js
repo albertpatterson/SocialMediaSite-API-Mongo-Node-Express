@@ -96,7 +96,16 @@ class MockDatabaseInterface{
 
     getOwnPosts(username){}
 
-    getFollowedPosts(username){}
+    getFollowedPosts(username){
+        this.assertUserExists(username);
+        let followedPosts = [];
+        let following = mockUsers[username].following;
+        following.forEach(followee=>{
+            [].push.apply(followedPosts, mockUsers[followee].ownPosts);
+        })
+
+        return followedPosts;
+    }
 
     addPost(username, post){
         this.assertUserExists(username);

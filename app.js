@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 const session = require("express-session");
 
 const sessionRoute = require('./routes/session.js');
+const postRoute = require('./routes/post.js');
 
 // require api routes
 
@@ -35,6 +36,7 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 // user api routes
 app.use("/session", sessionRoute);
+app.use("/post", postRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
