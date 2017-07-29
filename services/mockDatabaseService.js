@@ -1,6 +1,6 @@
 const Post = require('./Post');
 const PremiumContent = require('./PremiumContent');
-
+const PersonalData = require("./PersonalData");
 
 let connected = false;
 
@@ -9,16 +9,18 @@ let mockUsers = {};
 let imgCount = 0;
 function imageInc(){
     let img =  `static/${imgCount}.png`;
-    imgCount = imgCount++%20;
+    imgCount = ++imgCount%20;
     return img;
 }
 
-function MockPersonalData(username){
-    this.name=username;
-    this.location = username + "_location";
-    this.DOB = new Date();
-    this.business = username + "_business";
-    this.picture = imageInc();
+class MockPersonalData extends PersonalData{
+    constructor(username){
+        super(  username,
+                username + "_location",
+                new Date(),
+                username + "_business",
+                imageInc());
+    }
 }
 
 function MockUser(username){
@@ -28,38 +30,70 @@ function MockUser(username){
     this.ownPosts = [];
     this.messages = [];
     this.followedBy = [];
-    this.following = [];
+    this.following = [username];
     this.premiumContent = [];
 }
 
 
-class MockDatabaseInterface{
+const mockUsernames = ["Anne", "Kim", "Dan", "Bob", "Pam", "Jen"];
+
+let mockUserCreation = Promise.resolve();
+
+
+function decorateUser(idx){
+
+
+    const NFRIENDS = 2;
+    const mockUsername = mockUsernames[idx];
+    let friendOffset, friendIdx, friendName;
+
+    mockUserCreation = mockUserCreation
+        .then(function(){
+            return this.addPost(mockUsername, new Post(mockUsername, "Post 1"));
+        }.bind(this))
+        .then(function(){
+            return this.addPost(mockUsername, new Post(mockUsername, "Post 2"));
+        }.bind(this))
+        .then(function(){
+            return this.addPremium(mockUsername, new PremiumContent(imageInc()));
+        }.bind(this))
+        .then(function(){
+            return this.addPremium(mockUsername, new PremiumContent(imageInc()));
+        }.bind(this));
+
+    for(friendOffset = 1; friendOffset<=NFRIENDS; friendOffset++){
+        
+        friendIdx = (idx + friendOffset) % mockUsernames.length;
+        friendName = mockUsernames[friendIdx];
+
+        addMessageAndSubScription.call(this, mockUsername, friendName);
+
+    } 
+}
+
+function addMessageAndSubScription(mockUsername, friendName){
+        mockUserCreation = mockUserCreation
+        .then(function(){
+            return this.addMessage(mockUsername, new Post(friendName, "Message from "+friendName));
+        }.bind(this))
+        .then(function(){
+            return this.addSubscription(mockUsername, friendName);
+        }.bind(this));
+}
+
+class MockDatabaseService{
     
     constructor(){
 
-        let mockUsernames = ["Anne", "Kim", "Dan", "Bob", "Pam", "Jen"];
+        let mockUsername, mockUser;
 
-        let mockUsername, mockUser, friendOffset, friendIdx, friendName;
-
-        const NFRIENDS = 2;
         for(let idx=0; idx<mockUsernames.length; idx++){
-
+            
             mockUsername = mockUsernames[idx];
             mockUser = new MockUser(mockUsername);
             mockUsers[mockUsername] = mockUser;
-
-            this.addPost(mockUsername, new Post(mockUsername, "Post 1"));
-            this.addPost(mockUsername, new Post(mockUsername, "Post 2"));
-
-            this.addPremium(mockUsername, new PremiumContent(imageInc()));
-            this.addPremium(mockUsername, new PremiumContent(imageInc()));
-
-            for(friendOffset = 1; friendOffset<=NFRIENDS; friendOffset++){
-                friendIdx = (idx + friendOffset) % mockUsernames.length;
-                friendName = mockUsernames[friendIdx];
-                this.addMessage(mockUsername, new Post(friendName, "Post from friend"));
-                this.addSubscription(mockUsername, friendName);
-            }
+               
+            decorateUser.call(this, idx);
         }
     }    
     
@@ -73,52 +107,85 @@ class MockDatabaseInterface{
 
     assertUserExists(username){
         console.log('assert ', username);
-
-        if(!mockUsers.hasOwnProperty(username)){
-            throw new Error(`user "${username}" does not exist`);
-        }
+        return new Promise(function(res, rej){
+                    mockUsers.hasOwnProperty(username) ? res() : rej();
+                }.bind(this));
     }
 
     deleteUser(username){}
 
-    findPersonalData(username){}
+    findPersonalData(username){
+        return Promise.resolve(mockUsers[username].personalData);
+    }
 
     findPersonalDataMultiple(query){}
 
     setPersonalData(username, personalData){}
 
-    getPassword(username){
-        this.assertUserExists(username);
-        return mockUsers[username].password;
+    getPassword(username){   
+        return  mockUserCreation
+                .then(function(){
+                    return this.assertUserExists(username);
+                }.bind(this))
+                .then(function(){
+                    return mockUsers[username].password;
+                })
     }
 
     setPassword(username, password){}
 
-    getOwnPosts(username){}
+    getOwnPosts(username){
+        return  this.assertUserExists(username)
+                .then(function(){ 
+                    return mockUsers[username].ownPosts;
+                }.bind(this));
+    }
 
     getFollowedPosts(username){
-        this.assertUserExists(username);
-        let followedPosts = [];
-        let following = mockUsers[username].following;
-        following.forEach(followee=>{
-            [].push.apply(followedPosts, mockUsers[followee].ownPosts);
-        })
-
-        return followedPosts;
+        return  this.assertUserExists(username)
+                .then(function(){
+                    let followedPosts = [];
+                    let following = mockUsers[username].following;
+                    following.forEach(followee=>{
+                        [].push.apply(followedPosts, mockUsers[followee].ownPosts);
+                    })
+                    return followedPosts;
+                })
     }
 
     addPost(username, post){
-        this.assertUserExists(username);
-        mockUsers[username].ownPosts.push(post);
+        return  this.assertUserExists(username)
+                .then(function(){
+                    mockUsers[username].ownPosts.push(post);
+                }.bind(this));
     }
 
-    deletePost(username, idx){}
+    deletePost(username, idx){
+        return  this.assertUserExists(username)
+                .then(function(){
+                    return new Promise(function(res, rej){
+                        if(mockUsers[username].ownPosts.length > idx){
+                            mockUsers[username].ownPosts.splice(idx,1);
+                            res();
+                        }else{
+                            rej("Post #"+idx+" does not exist");
+                        }
+                    }.bind(this));
+                }.bind(this));
+    }
 
-    getMessages(username){}
+    getMessages(username){
+        return  this.assertUserExists(username)
+                .then(function(){
+                    return mockUsers[username].messages;
+                }.bind(this))
+    }
 
     addMessage(recipient, message){
-        this.assertUserExists(recipient);
-        mockUsers[recipient].messages.push(message);
+        return  this.assertUserExists(recipient)
+                .then(function(){
+                    mockUsers[recipient].messages.push(message);
+                }.bind(this))
     }
 
     deleteMessage(username, idx){}
@@ -130,16 +197,24 @@ class MockDatabaseInterface{
     getSubscriptions(username){}
 
     addSubscription(username, followee){
-        this.assertUserExists(username);
-        if(this.getFolloweeIndex(username, followee)==-1){
-            mockUsers[username].following.push(followee);
-        }
+        return  this.assertUserExists(username)
+                .then(function(){
+                    return this.getFolloweeIndex(username, followee);
+                }.bind(this))
+                .then(function(followeeIndex){
+                    if(followeeIndex==-1){
+                        mockUsers[username].following.push(followee);
+                    }
+                }.bind(this))
     }
 
     deleteSubscription(username, followee){}
 
     getFolloweeIndex(username, followee){
-        return mockUsers[username].following.indexOf(followee);
+        return  this.assertUserExists(username)
+                .then(function(){
+                    return mockUsers[username].following.indexOf(followee);
+                }.bind(this));
     }
 
     addFollowee(followeeUsername, followerUsername){}
@@ -151,12 +226,14 @@ class MockDatabaseInterface{
     }
 
     addPremium(username, content){
-        this.assertUserExists(username);
-        mockUsers[username].premiumContent.push(content);
+        return  this.assertUserExists(username)
+                .then(function(){
+                    mockUsers[username].premiumContent.push(content);
+                })
     }
 
     deletePremium(username, index){}
 }
 
-module.exports = new MockDatabaseInterface();
+module.exports = new MockDatabaseService();
 

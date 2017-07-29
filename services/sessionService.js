@@ -1,21 +1,26 @@
 const session = require("express-session");
-const mockDatabaseService = require('./mockDatabaseService');
-
+const databaseService = require('./mockDatabaseService');
 let sessionService = {
 
     signIn: function(req){
         let username = req.body.username;
         let password = req.body.password;
 
-        console.log('sign in');
-        console.log(mockDatabaseService);
-        console.log(mockDatabaseService.getPassword(username));
-        
-        if(password===mockDatabaseService.getPassword(username)){
-            req.session.username = username;
-            return true;
-        }
-        return false;
+        return new Promise(function(res, rej){
+            databaseService.getPassword(username)
+            .then(function(ExpectedPassword){
+                if(password===ExpectedPassword){
+                    req.session.username = username;
+                    res(true);
+                }else{
+                    res(false);
+                }
+            })
+            .catch(function(err){
+                console.log(err);
+                rej("Unable to retrieve password.");
+            })
+        })
     },
 
     isSignedIn: function(req){

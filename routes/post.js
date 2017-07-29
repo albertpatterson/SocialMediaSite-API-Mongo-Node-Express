@@ -2,19 +2,23 @@ const router = require('express').Router();
 const sessionService = require("../services/sessionService");
 const databaseService = require('../services/mockDatabaseService');
 const Post = require('../services/Post');
+const ParamAsserter = require("../utils/ParamAsserter");
 
 router.use(sessionService.assertSession.bind(sessionService));
 
 router.post("/", 
     
     function(req, res, next){
-        if(!req.body.username){
-            res.status(400).send('"username" must be provided')
-        }else if(!req.body.content){
-            res.status(400).send('"content" must be provided')
-        }else{
-            next();
-        }
+        new ParamAsserter(req, res, "body")
+        .assertParam("username", "content")
+        .finally(next);
+        // if(!req.body.username){
+        //     res.status(400).send('"username" must be provided')
+        // }else if(!req.body.content){
+        //     res.status(400).send('"content" must be provided')
+        // }else{
+        //     next();
+        // }
     },
 
     function(req, res, next){
@@ -27,43 +31,93 @@ router.post("/",
 router.get("/", 
 
     function(req, res, next){
-        if(!req.query){
-            res.status(400).send('"type" must be provided');
-        }
-        else if(!req.query.type){
-            res.status(400).send('"type" must be provided');
-        }else if(req.query.type === "followed"){
-            if(!req.query.username){
-                res.status(400).send('"username" must be provided');
+
+        let paramAsserter = new ParamAsserter(req, res, "query");
+
+        paramAsserter
+        .assertParam("type")
+        .then(function(){
+            if(req.query.type === "followed"){
+                paramAsserter.assertParam("username").finally(next);
+            }else if(req.query.type === "own"){
+                paramAsserter.assertParam("poster").finally(next);
             }else{
-                next();
+                paramAsserter.sendErrorMsgAndEnd('"type" must be either "own" or "followed"');
             }
-        }else if(req.query.type === "own"){
-            if(!req.query.poster){
-                res.status(400).send('"poster" must be provided');
-            }else{
-                next();
-            }
-        }else{
-            res.status(400).send('"type" must be either "own" or "followed"');
-        }
+        })
+
+        // if(!req.query){
+        //     res.status(400).send('"type" must be provided');
+        // }
+        // else if(!req.query.type){
+        //     res.status(400).send('"type" must be provided');
+        // }else if(req.query.type === "followed"){
+        //     if(!req.query.username){
+        //         res.status(400).send('"username" must be provided');
+        //     }else{
+        //         next();
+        //     }
+        // }else if(req.query.type === "own"){
+        //     if(!req.query.poster){
+        //         res.status(400).send('"poster" must be provided');
+        //     }else{
+        //         next();
+        //     }
+        // }else{
+        //     res.status(400).send('"type" must be either "own" or "followed"');
+        // }
     },
 
     function(req, res, next){
         let type = req.query.type;
         if(type==="own"){
             let poster = req.query.poster;
-            let dataObj = {data: databaseService.getOwnPosts(poster)};
-            res.type('application/json').status(200).json(dataObj);
+            
+            databaseService.getOwnPosts(poster)
+            .then(function(ownPosts){
+                let dataObj = {data: ownPosts};
+                res.type('application/json').status(200).json(dataObj);
+            })
+            .catch(function(err){
+                console.log(err);
+                res.status(500).send("Unable to retrieve posts.");
+            })
+
         }else{
             let username = req.query.username;
-            let dataObj = {data: databaseService.getFollowedPosts(username)};
-            res.type('application/json').status(200).json(dataObj);
+
+            databaseService.getFollowedPosts(username)
+            .then(function(followedPosts){
+                let dataObj = {data: followedPosts};
+                res.type('application/json').status(200).json(dataObj);
+            })
+            .catch(function(err){
+                console.log(err);
+                res.status(500).send("Unable to retrieve posts.");
+            })
         }
     })
 
-router.delete("/", function(req, res, next){
-    
-})
+router.delete("/",
+    function(req, res, next){
+        new ParamAsserter(res, res, "query")
+        .assertParam("username", "index")
+        .finally(next);
+
+        // if(!req.query){
+        //     res.status(400).send('"username" must be provided');
+        // }else if(!req.query.username){
+        //     res.status(400).send('"username" must be provided');
+        // }else if(!req.query.index){
+        //     res.status(400).send('"index" must be provided');
+        // }else{
+        //     next();
+        // }
+    },
+
+    function(req, res, next){
+        databaseService.deletePost(req.username, req.idx);
+        res.status(204).end();
+    })
 
 module.exports = router;

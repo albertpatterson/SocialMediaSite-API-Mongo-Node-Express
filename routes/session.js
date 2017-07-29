@@ -1,16 +1,33 @@
 const router = require("express").Router();
 const session = require("express-session");
+
 const sessionService = require("../services/sessionService");
 
+const ParamAsserter = require("../utils/ParamAsserter");
 
-router.post("/", function(req, res, next){
-    let signInOk = sessionService.signIn(req);
-    if(signInOk){
-        res.status("201").end();
-    }else{
-        res.status("401").end();
-    }
-})
+router.post("/", 
+
+    function(req, res, next){
+        new ParamAsserter(req, res, "body")
+        .assertParam("username", "password")
+        .finally(next);
+    },
+
+    function(req, res, next){
+
+        sessionService.signIn(req)
+        .then(function(validCredentials){
+            if(validCredentials){
+                res.status(201).end();
+            }else{
+                res.status(401).end();
+            }
+        })
+        .catch(function(err){
+            console.log(err);
+            res.status(500).send("Unable to sign in.")
+        })
+    })
 
 router.get("/", function(req, res, next){
     if(sessionService.isSignedIn(req)){
