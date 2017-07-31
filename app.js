@@ -11,6 +11,8 @@ const sessionRoute = require('./routes/session.js');
 const postRoute = require('./routes/post.js');
 const messageRoute = require('./routes/message.js');
 const personalDataRoute = require('./routes/personalData.js');
+const premiumRoute = require('./routes/premium.js');
+const subscriptionRoute = require('./routes/subscription.js');
 
 // require api routes
 
@@ -41,6 +43,9 @@ app.use("/session", sessionRoute);
 app.use("/post", postRoute);
 app.use("/message", messageRoute);
 app.use("/personalData", personalDataRoute);
+app.use("/premium", premiumRoute);
+app.use("/subscription", subscriptionRoute);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

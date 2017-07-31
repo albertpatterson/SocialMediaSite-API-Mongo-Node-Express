@@ -66,7 +66,7 @@ router.get("/",
         if(req.query.desiredUserName){
             dataPromise = databaseService.findPersonalData(req.query.desiredUserName);
         }else{
-            dataPromise =   databaseService.findPersonalDataMultiple(req.querybody.desiredUserQuery)
+            dataPromise =   databaseService.findPersonalDataMultiple(req.query.desiredUserQuery)
                             .then(function(personalData){
                                 return {data: personalData};
                             }.bind(this));

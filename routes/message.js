@@ -16,7 +16,7 @@ router.post("/",
         .finally(next);
     },
     function(req, res, next){
-        databaseService.addMessage(req.recipient, new Post(req.username, req.content));
+        databaseService.addMessage(req.body.recipient, new Post(req.body.username, req.body.content));
         res.status(201).end();
     })
 
@@ -45,7 +45,7 @@ router.delete("/",
         .finally(next);
     },
     function(req, res, next){
-        databaseService.deleteMessage(req.username, req.idx);
+        databaseService.deleteMessage(req.query.username, req.query.idx);
         res.status(204).end();
     })
 

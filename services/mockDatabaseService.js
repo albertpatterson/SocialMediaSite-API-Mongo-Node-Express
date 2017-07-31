@@ -103,7 +103,9 @@ class MockDatabaseService{
 
     addUser(username, personalData, password){}
 
-    checkUser(username){}
+    checkUser(username){
+        return Promise.resolve(mockUsernames.indexOf(username)!=-1);
+    }
 
     assertUserExists(username){
         console.log('assert ', username);
@@ -115,12 +117,23 @@ class MockDatabaseService{
     deleteUser(username){}
 
     findPersonalData(username){
-        return Promise.resolve(mockUsers[username].personalData);
+        return  this.assertUserExists(username)
+                .then(()=>mockUsers[username].personalData);
     }
 
-    findPersonalDataMultiple(query){}
+    findPersonalDataMultiple(query){
+        return  new Promise((res, req)=>{
+            let reqExp = new RegExp(query);
+            res(mockUsernames.filter(n=>n.match(reqExp)).map(n=>mockUsers[n].personalData));
+        })
+    }
 
-    setPersonalData(username, personalData){}
+    setPersonalData(username, personalData){
+        return  this.assertUserExists(username)
+                .then(function(){ 
+                    return mockUsers[username].personalData = personalData;
+                }.bind(this));        
+    }
 
     getPassword(username){   
         return  mockUserCreation
@@ -132,7 +145,12 @@ class MockDatabaseService{
                 })
     }
 
-    setPassword(username, password){}
+    setPassword(username, password){
+        return  this.assertUserExists(username)
+            .then(function(){ 
+                return mockUsers[username].password = password;
+            }.bind(this));
+    }
 
     getOwnPosts(username){
         return  this.assertUserExists(username)
@@ -188,13 +206,52 @@ class MockDatabaseService{
                 }.bind(this))
     }
 
-    deleteMessage(username, idx){}
+    deleteMessage(username, idx){
+        return  this.assertUserExists(username)
+                .then(()=>new Promise(
+                            (res, rej)=>{
+                                if(mockUsers[username].messages.length > idx){
+                                    mockUsers[username].messages.splice(idx,1);
+                                    res();
+                                }else{
+                                    rej("Message #"+idx+" does not exist");
+                                }
+                            }
+                        )
+                    );
+    }
 
-    addFollower(followeeUsername, followerUsername){}
+    addFollower(followeeUsername, followerUsername){
+        return  this.assertUserExists(followeeUsername)
+                .then(()=>this.assertUserExists(followerUsername))
+                .then(()=>{
+                    if(mockUsers[followeeUsername].followedBy.indexOf(followerUsername)==-1){
+                        mockUsers[followeeUsername].followedBy.push(followerUsername);
+                        mockUsers[followerUsername].following.push(followeeUsername);
+                    } 
+                });
+    }
 
-    deleteFollower(followeeUsername, followerUsername){}
+    deleteFollower(followeeUsername, followerUsername){
+        return  this.assertUserExists(followeeUsername)
+                .then(()=>this.assertUserExists(followerUsername))
+                .then(()=>{
+                    let followerIdx = mockUsers[followeeUsername].followedBy.indexOf(followerUsername);
+                    if(followerIdx!=-1){
+                        mockUsers[followeeUsername].followedBy.splice(followerIdx, 1);
+                    } 
 
-    getSubscriptions(username){}
+                    let followeeIdx = mockUsers[followerUsername].following.indexOf(followeeUsername);
+                    if(followeeIdx!=-1){
+                        mockUsers[followreUsername].following.splice(followeeIdx, 1);
+                    } 
+                });
+    }
+
+    getSubscriptions(username){
+        return  this.assertUserExists(username)
+                .then(()=>mockUsers[followreUsername].following);
+    }
 
     addSubscription(username, followee){
         return  this.assertUserExists(username)
@@ -208,7 +265,8 @@ class MockDatabaseService{
                 }.bind(this))
     }
 
-    deleteSubscription(username, followee){}
+    // deleteSubscription(username, followee){
+    // }
 
     getFolloweeIndex(username, followee){
         return  this.assertUserExists(username)
@@ -217,22 +275,37 @@ class MockDatabaseService{
                 }.bind(this));
     }
 
-    addFollowee(followeeUsername, followerUsername){}
+    // addFollowee(followeeUsername, followerUsername){
+    // }
 
-    deleteFollowee(followeeUsername, followerUsername){}
+    deleteFollowee(followeeUsername, followerUsername){
+        return this.deleteFollower(followeeUsername, followerUsername);
+    }
 
     getPremium(username){
-
+       return  this.assertUserExists(username)
+                .then(()=>mockUsers[username].premiumContent);
     }
 
     addPremium(username, content){
         return  this.assertUserExists(username)
-                .then(function(){
-                    mockUsers[username].premiumContent.push(content);
-                })
+                .then(()=>mockUsers[username].premiumContent.push(content))
     }
 
-    deletePremium(username, index){}
+    deletePremium(username, idx){
+        return  this.assertUserExists(username)
+                .then(()=>new Promise(
+                            (res, rej)=>{
+                                if(mockUsers[username].premiumContent.length > idx){
+                                    mockUsers[username].premiumContent.splice(idx,1);
+                                    res();
+                                }else{
+                                    rej("Premium Item #"+idx+" does not exist");
+                                }
+                            }
+                        )
+                    );
+    }
 }
 
 module.exports = new MockDatabaseService();

@@ -38,4 +38,16 @@ router.get("/", function(req, res, next){
 })
 
 
+router.delete("/",
+    sessionService.assertSession.bind(sessionService),
+    function(req, res, next){
+        try{
+            sessionService.deleteSession(req);
+            res.status(204).end();
+        }catch(err){
+            res.status(500).send("Unable to delete session.");
+        }
+    })
+
+
 module.exports = router;
