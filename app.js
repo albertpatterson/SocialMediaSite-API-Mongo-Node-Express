@@ -45,6 +45,7 @@ app.use("/message", messageRoute);
 app.use("/personalData", personalDataRoute);
 app.use("/premium", premiumRoute);
 app.use("/subscription", subscriptionRoute);
+app.use("/signUp", personalDataRoute);
 
 
 // catch 404 and forward to error handler

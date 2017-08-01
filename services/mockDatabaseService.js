@@ -101,7 +101,15 @@ class MockDatabaseService{
 
     close(){}
 
-    addUser(username, personalData, password){}
+    addUser(username, personalData, password){
+        return new Promise((res, rej)=>{
+            mockUsers[username] = new MockUser(username);
+            mockUsers[username].personalData = personalData;
+            mockUsers[username].password = password;
+            mockUsernames.push(username);
+            res();
+        })
+    }
 
     checkUser(username){
         return Promise.resolve(mockUsernames.indexOf(username)!=-1);

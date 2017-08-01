@@ -9,12 +9,14 @@ const PersonalData = require("../services/PersonalData");
 
 const pictureUpload = multer({dest: "./dist/static"}).single("picture");
 
-router.use(sessionService.assertSession.bind(sessionService));
+const assertSession = sessionService.assertSession.bind(sessionService);
 
 router.post("/", 
+
+    pictureUpload,    
     function(req, res, next){
         new ParamAsserter(req, res, "body")
-        .assertParam("username", "password", "location", "DOB", "business", "picture")
+        .assertParam("username", "password", "location", "DOB", "business")
         .finally(next);
     },
     function(req, res, next){
@@ -28,17 +30,16 @@ router.post("/",
             }
         })
     },
-    pictureUpload,
     function(req, res, next){
         let personalData = new PersonalData(
-            req.username,
-            req.location,
-            req.DOB,
-            req.business,
-            req.file
+            req.body.username,
+            req.body.location,
+            req.body.DOB,
+            req.body.business,
+            req.file.path.slice(5)
         )
 
-        databaseService.addUser(req.username, personalData, req.password)
+        databaseService.addUser(req.body.username, personalData, req.body.password)
         .then(function(){
             res.status(201).end();
         }.bind(this))
@@ -48,7 +49,8 @@ router.post("/",
         }.bind(this))
     })
 
-router.get("/", 
+router.get("/",
+    assertSession ,
     function(req, res, next){
         let paramAsserter = new ParamAsserter(req, res, "query");
 
@@ -84,10 +86,12 @@ router.get("/",
     function(req, res, next){})
 
 router.put("/", 
+    assertSession,
     function(req, res, next){},
     function(req, res, next){})
 
 router.delete("/", 
+    assertSession,
     function(req, res, next){},
     function(req, res, next){})
 
