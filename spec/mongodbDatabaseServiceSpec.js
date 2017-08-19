@@ -5,7 +5,7 @@ const Post = require("../services/Post");
 
 mongodbDatabaseService.connect()
 // .then(()=>{
-//     let username = "test2"
+//     let username = "test3"
 //     let personalData = new PersonalData(username, "loc", new Date(), "bus", "0.png");
 //     return mongodbDatabaseService.addUser(username, personalData, "testpw");
 // })
@@ -15,17 +15,27 @@ mongodbDatabaseService.connect()
 //     return mongodbDatabaseService.setPersonalData(username, personalData);
 // })
 .then(()=>{
-    let username = "test2"
+    let username = "test3"
     let newPost = new Post(username,"more new info");
     return mongodbDatabaseService.addPost(username, newPost);
 })
 .then(()=>{
-    let username = "test2"
+    let username = "test3"
     return mongodbDatabaseService.findPersonalData(username)
     .then(pd=>console.log('personaldata ', pd))
 })
 .then(()=>{
-    let username = "test2"
+    let username = "test3"
+    return mongodbDatabaseService.getOwnPosts(username)
+    .then(ops=>console.log('own posts: ', ops))
+})
+.then(()=>{
+    console.log('delete post 1')
+    let username = "test3"
+    return mongodbDatabaseService.deletePost(username,0)
+})
+.then(()=>{
+    let username = "test3"
     return mongodbDatabaseService.getOwnPosts(username)
     .then(ops=>console.log('own posts: ', ops))
 })

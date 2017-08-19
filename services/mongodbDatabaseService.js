@@ -104,7 +104,7 @@ class MongodbDatabaseService{
     }
 
     _updateUser(username, update){
-        return users.update({name:username}, update).then(()=>{});
+        return users.updateOne({name:username}, update).then(()=>{});
     }
 
     findPersonalData(username){
@@ -136,11 +136,18 @@ class MongodbDatabaseService{
     getFollowedPosts(username){}
 
     addPost(username, post){
-        let update = {$push: {ownPosts: post}};
-        return this._updateUser(username, update);
+        return this._findUserProperty(username, "_newPostIdx")
+        .then(idx=>{
+            post.idx = idx;
+            let update = {$push: {ownPosts: post}, $set: {_newPostIdx: ++idx}};
+            return this._updateUser(username, update);
+        })
     }
 
-    deletePost(username, idx){}
+    deletePost(username, idx){
+        let update = {$pull: {ownPosts: {idx}}};
+        return this._updateUser(username, update).then(()=>{});
+    }
 
     getMessages(username){
         return this._findUserProperty(username, "messages");
