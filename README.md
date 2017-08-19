@@ -1,18 +1,35 @@
 # PrimitiveSocialMediaSite-API-Mongo-Node-Express
 This will be the an API for the Primitive Social Media Site project. This version of the API will be written in Javascript using Mongodb, Nodejs, and Express to provide access to the following resources by the indicated methods:
-- [ ] User Information
-  - [ ] post: create a new user (sign up)
-  - [ ] get: get a user's (or multiple users') information
-  - [ ] put: update user information
-  - [ ] delete: delete a user (delete account)
-- [ ] Member Authentication
-  - [ ] post: create a new session (sign in)
-  - [ ] get: get the current session (check credentials)
-  - [ ] delete: delete the current session (sign out)
-- [ ] Messages
-  - [ ] post: create a new message
-  - [ ] get: get messages
-- [ ] Posts
-  - [ ] post: create a new post
-  - [ ] get: get posts
-  - [ ] delete: delete a post
+- [ ] API
+  - [x] Personal Information
+    - [x] post: create a new user (sign up)
+    - [x] get: get a user's (or multiple users') information
+    - [x] put: update user information
+    - [x] delete: delete a user (delete account)
+  - [x] Member Authentication
+    - [x] post: create a new session (sign in)
+    - [x] get: get the current session (check credentials)
+    - [x] delete: delete the current session (sign out)
+  -[x] Sign up
+    - [x] post: create a new user
+  - [x] Messages
+    - [x] post: create a new message
+    - [x] get: get messages
+    - [x] delete: delete a message
+  - [x] Posts
+    - [x] post: create a new post
+    - [x] get: get posts
+    - [x] delete: delete a post
+  - [x] premium (manage premium content)
+    - [x] post: create a new premium item
+    - [x] get: get premium items
+    - [x] delete: delete a premium item
+  - [ ] Services
+    - [x] DatabaseService
+      - [x] Mock
+      - [ ] Mongodb
+- [x] View (compiled front end from the PrimitiveSocialMediaSite-Angular-Front-End rep)
+- [ ] Database (integration with MongoDB)
+- [ ] Tests
+  - [ ] Services
+  - [ ] routes
