@@ -1,5 +1,6 @@
 const MongoClient = require('mongodb').MongoClient;
-const privateDbUrl = require('../../../private/socialMediaDatabasePrivateURL');
+// const privateDbUrl = require('../../../private/socialMediaDatabasePrivateURL');
+const privateDbUrl = require('../../../private/psmaMongodbUrl');
 
 const User = require('./User');
 const Post = require('./Post');
@@ -18,7 +19,7 @@ class MongodbDatabaseService{
      * @returns Promise<> resolved once the connection is established
      * @memberof MongodbDatabaseService
      */
-    connect(){
+    connectToDatabase(){
         if(db){
             console.log('Already connected to database.');
             return Promise.resolve();
@@ -38,7 +39,7 @@ class MongodbDatabaseService{
      * 
      * @returns Promise<> resolved once the connection is closed
      */
-    close(){
+    closeDatabaseConnection(){
         if(!db){
             console.log('not connected to database.');
             return Promise.resolve();
@@ -50,6 +51,11 @@ class MongodbDatabaseService{
             db=null;
             users = null;
         })
+    }
+
+    clearDatabase(){
+        return users.deleteMany()
+        .then(users = db.collection('users'));
     }
 
     /**
@@ -91,7 +97,9 @@ class MongodbDatabaseService{
         })
     }
 
-    deleteUser(username){}
+    deleteUser(username){
+        return users.deleteOne({name: username}).then(()=>{});
+    }
 
 
     _findUser(username){
@@ -111,8 +119,12 @@ class MongodbDatabaseService{
         return this._findUserProperty(username, "personalData");
     }
 
-    findPersonalDataMultiple(query){
-        return users.find({name: query});
+    findPersonalDataMultiple(jsRegexp){
+        return new Promise((res, rej)=>{
+            const query = {name: {$regex: jsRegexp}};
+            users.find(query)
+            .toArray((err, docs)=>err?rej(err):res(docs.map(d=>d.personalData)));
+        })
     }
 
     setPersonalData(username, personalData){
@@ -133,7 +145,23 @@ class MongodbDatabaseService{
         return this._findUserProperty(username, "ownPosts");
     }
 
-    getFollowedPosts(username){}
+    getFollowedPosts(username){
+        return new Promise((res, rej)=>{
+            let followedPosts = [];
+            
+            this._findUserProperty(username, "following")
+            .then(followees=>{
+                return followees.map(followee=>{
+                    return this._findUserProperty(followee, 'ownPosts')
+                    .then(followeePosts=>followedPosts.push.apply(followedPosts, followeePosts));
+                })
+            })
+            .then(getFolloweePostProms=>{
+                Promise.all(getFolloweePostProms)
+                .then(()=>res(followedPosts))
+            })
+        })
+    }
 
     addPost(username, post){
         return this._findUserProperty(username, "_newPostIdx")
@@ -154,11 +182,18 @@ class MongodbDatabaseService{
     }
 
     addMessage(recipient, message){
-        let update = {$push: {messages: message}};
-        return this._updateUser(username, update);
+        return this._findUserProperty(recipient, "_newMessageIdx")
+        .then(idx=>{
+            message.idx = idx;
+            let update = {$push: {messages: message}, $set: {_newMessageIdx: ++idx}};
+            return this._updateUser(recipient, update);
+        })
     }
 
-    deleteMessage(username, idx){}
+    deleteMessage(username, idx){
+        let update = {$pull: {messages: {idx}}};
+        return this._updateUser(username, update).then(()=>{});
+    }
 
     addFollower(followeeUsername, followerUsername){
         let followeeUpdate = {$push: {followedBy: followerUsername}};
@@ -177,7 +212,13 @@ class MongodbDatabaseService{
     }
 
     addSubscription(username, followee){
+        let followeeUpdate = {$push: {followedBy: username}};
+        let updateFolloee = this._updateUser(followee, followeeUpdate);
 
+        let followerUpdate = {$push: {following: followee}};
+        let updateFollower = this._updateUser(username, followerUpdate);
+
+        return Promise.all([updateFolloee, updateFollower]);
     }
 
     getFolloweeIndex(username, followee){}
@@ -188,9 +229,19 @@ class MongodbDatabaseService{
         return this._findUserProperty(username, "premiumContent");
     }
 
-    addPremium(username, content){}
+    addPremium(username, content){
+        return this._findUserProperty(username, "_newPremiumContentIdx")
+        .then(idx=>{
+            content.idx = idx;
+            let update = {$push: {premiumContent: content}, $set: {_newPremiumContentIdx: ++idx}};
+            return this._updateUser(username, update);
+        })
+    }
 
-    deletePremium(username, idx){}
+    deletePremium(username, idx){
+        let update = {$pull: {premiumContent: {idx}}};
+        return this._updateUser(username, update).then(()=>{});
+    }
 }
 
 module.exports = new MongodbDatabaseService();

@@ -1,7 +1,8 @@
 const router = require('express').Router();
 
 const sessionService = require("../services/sessionService");
-const databaseService = require('../services/mockDatabaseService');
+// const databaseService = require('../services/mockDatabaseService');
+const databaseService = require('../services/mongodbDatabaseService');
 const ParamAsserter = require("../utils/ParamAsserter");
 const PermiumContent = require("../services/PremiumContent");
 

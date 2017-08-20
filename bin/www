@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('myapp:server');
 var http = require('http');
+const databaseService = require("../services/mongodbDatabaseService")
 
 /**
  * Get port from environment and store in Express.
@@ -25,7 +26,12 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+databaseService.connectToDatabase()
+.then(()=>{
+  server.listen(port)
+})
+.catch(e=>console.log(e));
+
 server.on('error', onError);
 server.on('listening', onListening);
 

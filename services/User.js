@@ -11,6 +11,7 @@ class User{
         this.premiumContent = [];
         this._newPostIdx = 0;
         this._newMessageIdx = 0;
+        this._newPremiumContentIdx = 0;
     }
 }
 

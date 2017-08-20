@@ -16,6 +16,20 @@
             "request": "launch",
             "name": "debug dbserv",
             "program": "${workspaceRoot}\\spec\\mongodbDatabaseServiceSpec"
+        },
+
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "run server test",
+            "program": "${workspaceRoot}\\node_modules\\jasmine\\bin\\jasmine"
+        },
+
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "initDB",
+            "program": "${workspaceRoot}\\spec\\utils\\initMongoDb"
         }
     ]
 }
