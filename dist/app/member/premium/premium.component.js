@@ -39,12 +39,21 @@ var PremiumComponent = (function () {
         }.bind(this));
     };
     /**
-     * submit for to purchase premium content. todo: wire up form
+     * submit new premium content
      *
      * @memberof PremiumComponent
      */
     PremiumComponent.prototype.onSubmit = function () {
-        console.log('submitted!');
+        var _this = this;
+        this.premiumService.addPremium(this.username, this.newContent)
+            .then(function () { return _this.premiumService.getPremium(_this.username); })
+            .then(function (premiumItems) {
+            var premiumStrings = premiumItems.map(function (item) { return item.content; });
+            this.premiumGroups = this._toGrid(premiumStrings, 3);
+        }.bind(this));
+    };
+    PremiumComponent.prototype.selectContent = function (event) {
+        this.newContent = event.target.files[0];
     };
     /**
      * create a grid

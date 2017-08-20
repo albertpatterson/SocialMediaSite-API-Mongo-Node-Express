@@ -1,7 +1,7 @@
-<form #premiumForm="ngForm" (ngSubmit)="onSubmit()">
+<form #premiumForm="ngForm" (ngSubmit)="fileInput.value=null; onSubmit()">
     <div class="form-group centered smallForm">
         <label for="premiumItem">Purchase New Premium Item</label>
-        <input id="premiumItem" type="file" required class="form-control fullWidth">
+        <input id="premiumItem" #fileInput type="file" required class="form-control fullWidth" (change)="selectContent($event)">
         <button type="submit" class="btn btn-success fullWidth" [disabled]="!premiumForm.valid">Purchase</button>
     </div>
 </form>

@@ -32,12 +32,13 @@ router.post("/",
         })
     },
     function(req, res, next){
+        let filepath = req.file ? req.file.path.slice(5) : null;
         let personalData = new PersonalData(
             req.body.username,
             req.body.location,
             req.body.DOB,
             req.body.business,
-            req.file.path.slice(5)
+            filepath
         )
 
         databaseService.addUser(req.body.username, personalData, req.body.password)

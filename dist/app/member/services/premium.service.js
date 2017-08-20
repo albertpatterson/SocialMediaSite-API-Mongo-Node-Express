@@ -64,11 +64,11 @@ var PremiumService = (function () {
     PremiumService.prototype.addPremium = function (username, content) {
         var _this = this;
         return new Promise(function (res, rej) {
-            var data = new http_1.URLSearchParams();
-            data.append("username", username);
-            data.append("item", content);
+            var formData = new FormData();
+            formData.append('username', username);
+            formData.append("content", content, content.name);
             var resolver = function () { return res(); };
-            _this.http.post(_this._premiumUrl, data)
+            _this.http.post(_this._premiumUrl, formData)
                 .toPromise()
                 .then(function (resp) { return handleResponse_1.assertStatus(resolver, resp, 201, "Unable to add premium item"); })
                 .catch(function (err) { return handleResponse_1.handleError(rej, err); });

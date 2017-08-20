@@ -1,22 +1,26 @@
 const router = require('express').Router();
+const multer = require("multer");
 
 const sessionService = require("../services/sessionService");
 // const databaseService = require('../services/mockDatabaseService');
 const databaseService = require('../services/mongodbDatabaseService');
 const ParamAsserter = require("../utils/ParamAsserter");
-const PermiumContent = require("../services/PremiumContent");
+const PremiumContent = require("../services/PremiumContent");
 
+const pictureUpload = multer({dest: "./dist/static"}).single("content");
 
 router.use(sessionService.assertSession.bind(sessionService));
 
 router.post("/",
+    pictureUpload,
     function(req, res, next){
         new ParamAsserter(req, res, "body")
-        .assertParam("username", "content")
+        .assertParam("username")
         .finally(next);
     },
     function(req, res, next){
-        let newContent = new premiumContent(req.body.content);
+        let filepath = req.file ? req.file.path.slice(5) : null;
+        let newContent = new PremiumContent(filepath);
 
         databaseService.addPremium(req.body.username, newContent)
         .then(()=>res.status(201).end())
