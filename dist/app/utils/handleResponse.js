@@ -11,7 +11,7 @@ function handleError(rej, error) {
     // In a real world app, you might use a remote logging infrastructure
     var errMsg;
     if (error instanceof http_1.Response && error.text()) {
-        errMsg = error.json().message;
+        errMsg = error.text();
     }
     else {
         errMsg = error.message ? error.message : error.toString();

@@ -72,6 +72,7 @@ var SignUpComponent = (function () {
      */
     SignUpComponent.prototype._handleSignUpError = function (error) {
         console.log(error);
+        alert(error);
     };
     /**
      * get the current date
