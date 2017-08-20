@@ -157,7 +157,7 @@ describe("mongDatabaseService", function(){
         .then(done)
     })
 
-    it("should add a follower/follow a user via the 'addFollower' method", done=>{
+    it("should add a follower/follow a user via the 'addSubscription' method", done=>{
         const   username1 = "Bob",
                 username2 = "Bobby",
                 post0 = new MockPost(username1);
@@ -166,7 +166,7 @@ describe("mongDatabaseService", function(){
         .then(()=>addUser(username2))
         .then(()=>mongodbDatabaseService.getFollowedPosts(username2))
         .then(data=>expect(data.length).toBe(0))
-        .then(()=>mongodbDatabaseService.addFollower(username1, username2))
+        .then(()=>mongodbDatabaseService.addSubscription(username2, username1))
         .then(()=>mongodbDatabaseService.addPost(username1, post0))
         .then(()=>mongodbDatabaseService.getFollowedPosts(username2))
         .then(data=>expect(data.length).toBe(1))

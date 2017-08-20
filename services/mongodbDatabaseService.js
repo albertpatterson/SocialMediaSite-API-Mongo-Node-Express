@@ -195,15 +195,15 @@ class MongodbDatabaseService{
         return this._updateUser(username, update).then(()=>{});
     }
 
-    addFollower(followeeUsername, followerUsername){
-        let followeeUpdate = {$push: {followedBy: followerUsername}};
-        let updateFolloee = this._updateUser(followeeUsername, followeeUpdate);
+    // addFollower(followeeUsername, followerUsername){
+    //     let followeeUpdate = {$push: {followedBy: followerUsername}};
+    //     let updateFolloee = this._updateUser(followeeUsername, followeeUpdate);
 
-        let followerUpdate = {$push: {following: followeeUsername}};
-        let updateFollower = this._updateUser(followerUsername, followerUpdate);
+    //     let followerUpdate = {$push: {following: followeeUsername}};
+    //     let updateFollower = this._updateUser(followerUsername, followerUpdate);
 
-        return Promise.all([updateFolloee, updateFollower]);
-    }
+    //     return Promise.all([updateFolloee, updateFollower]);
+    // }
 
     deleteFollower(followeeUsername, followerUsername){}
 
