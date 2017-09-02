@@ -1,6 +1,6 @@
 # PrimitiveSocialMediaSite-API-Mongo-Node-Express
 This will be the an API for the Primitive Social Media Site project. This version of the API will be written in Javascript using Mongodb, Nodejs, and Express to provide access to the following resources by the indicated methods:
-- [ ] API
+- [x] API
   - [x] Personal Information
     - [x] post: create a new user (sign up)
     - [x] get: get a user's (or multiple users') information
@@ -27,9 +27,19 @@ This will be the an API for the Primitive Social Media Site project. This versio
   - [ ] Services
     - [x] DatabaseService
       - [x] Mock
-      - [ ] Mongodb
+      - [x] Mongodb
 - [x] View (compiled front end from the PrimitiveSocialMediaSite-Angular-Front-End rep)
-- [ ] Database (integration with MongoDB)
+- [x] Database (integration with MongoDB)
 - [ ] Tests
   - [ ] Services
   - [ ] routes
+  
+## Usage
+This repository contains an implementation of the backend for a social media site as well as the transpiled front end. The app is ready to deploy. The source code for the front end as well as a detailed discussion of the features of the app may be found in [PrimitiveSocialMediaSite-Angular-Front-End](https://github.com/albertpatterson/PrimitiveSocialMediaSite-Angular-Front-End)
+  
+ ## Intallation & Getting Started
+ 1) Clone this repository
+ 2) install: $> npm install
+ 3) update the "privateDbUrl" variable in services/mongodbDatabaseService.js to point to a collection in your own database containing a document "users". Information about the URI format may be found in the [mongoDB doc](https://docs.mongodb.com/manual/reference/connection-string/)
+4) run $> npm start, the app should then be available at http://localhost::3000
+
