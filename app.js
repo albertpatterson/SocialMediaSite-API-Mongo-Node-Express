@@ -7,14 +7,8 @@ var bodyParser = require('body-parser');
 
 const session = require("express-session");
 
-const sessionRoute = require('./routes/session.js');
-const postRoute = require('./routes/post.js');
-const messageRoute = require('./routes/message.js');
-const personalDataRoute = require('./routes/personalData.js');
-const premiumRoute = require('./routes/premium.js');
-const subscriptionRoute = require('./routes/subscription.js');
-
-// require api routes
+// routes for social media
+var socialMediaRoutes = require("./back-ends/social-media/routes");
 
 var app = express();
 
@@ -26,6 +20,9 @@ app.use(session({
   cookie: { secure: true }
 }))
 
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -33,19 +30,10 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-
-// serve angular app from dist folder
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 
-// user api routes
-app.use("/session", sessionRoute);
-app.use("/post", postRoute);
-app.use("/message", messageRoute);
-app.use("/personalData", personalDataRoute);
-app.use("/premium", premiumRoute);
-app.use("/subscription", subscriptionRoute);
-app.use("/signUp", personalDataRoute);
+app.use('/social-media/api', socialMediaRoutes);
 
 
 // catch 404 and forward to error handler
