@@ -89,6 +89,7 @@ router.get("/",
 
             databaseService.getFollowedPosts(username)
             .then(function(followedPosts){
+                followedPosts.sort((a,b)=>a.timestamp<b.timestamp)
                 let dataObj = {data: followedPosts};
                 res.type('application/json').status(200).json(dataObj);
             })
