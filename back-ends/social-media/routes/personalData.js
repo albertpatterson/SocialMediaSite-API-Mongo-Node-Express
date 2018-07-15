@@ -1,6 +1,8 @@
 const router = require("express").Router();
 const multer = require("multer");
 const hashString = require("../utils/hashString");
+const path = require("path");
+const url = require("url");
 
 const sessionService = require("../services/sessionService");
 const ParamAsserter = require("../utils/ParamAsserter");
@@ -13,9 +15,9 @@ const pictureUpload = multer({dest: "./public/social-media/static"}).single("pic
 
 const assertSession = sessionService.assertSession.bind(sessionService);
 
-router.post("/", 
+router.post("/",
 
-    pictureUpload,    
+    pictureUpload,
     function(req, res, next){
         new ParamAsserter(req, res, "body")
         .assertParam("username", "password", "location", "DOB", "business")
@@ -33,13 +35,13 @@ router.post("/",
         })
     },
     function(req, res, next){
-        let filepath = req.file ? req.file.path.slice(20) : null;
+
         let personalData = new PersonalData(
             req.body.username,
             req.body.location,
             req.body.DOB,
             req.body.business,
-            filepath
+            req.file.filename
         )
 
         let hashPass = hashString(req.body.password);
