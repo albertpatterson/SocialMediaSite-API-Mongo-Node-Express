@@ -1,24 +1,23 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
 const session = require("express-session");
 
-// routes for social media
-var socialMediaRoutes = require("./back-ends/social-media/routes");
+const socialMediaRoutes = require("./back-ends/social-media/routes");
 
-var app = express();
+const app = express();
 
-app.set('trust proxy', 1) // trust first proxy 
+app.set('trust proxy', 1); // trust first proxy
 app.use(session({
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: true,
   cookie: { secure: true }
-}))
+}));
 
 
 app.use(logger('dev'));
@@ -44,7 +43,7 @@ app.use('/social-media/api', socialMediaRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+  const err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
