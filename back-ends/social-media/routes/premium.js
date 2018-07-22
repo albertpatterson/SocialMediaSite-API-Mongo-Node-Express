@@ -7,7 +7,7 @@ const databaseService = require('../services/mongodbDatabaseService');
 const ParamAsserter = require("../utils/ParamAsserter");
 const PremiumContent = require("../services/PremiumContent");
 
-const pictureUpload = multer({dest: "./public/static"}).single("content");
+const pictureUpload = multer({dest: "/var/images"}).single("content");
 
 router.use(sessionService.assertSession.bind(sessionService));
 

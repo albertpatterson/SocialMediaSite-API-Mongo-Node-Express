@@ -7,6 +7,8 @@ services:
   - "80:80"
   depends_on:
     - api
+  volumes:
+   - ./data/images:/etc/nginx/html/social-media/images
 
  api:
   image: apatterson189/social-media:api-express
@@ -14,6 +16,8 @@ services:
   - "9000:9000"
   depends_on:
     - database
+  volumes:
+   - ./data/images:/var/images
 
  database:
   image: mongo

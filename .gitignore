@@ -3,3 +3,6 @@ dist/node_modules
 dist/old
 dist
 junk
+
+.idea
+*.iml

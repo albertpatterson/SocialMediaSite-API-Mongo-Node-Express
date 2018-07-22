@@ -11,7 +11,7 @@ const databaseService = require('../services/mongodbDatabaseService');
 const PersonalData = require("../services/PersonalData");
 
 
-const pictureUpload = multer({dest: "./public/social-media/static"}).single("picture");
+const pictureUpload = multer({dest: "/var/images"}).single("picture");
 
 const assertSession = sessionService.assertSession.bind(sessionService);
 
