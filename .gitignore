@@ -6,3 +6,4 @@ junk
 
 .idea
 *.iml
+.DS_Store

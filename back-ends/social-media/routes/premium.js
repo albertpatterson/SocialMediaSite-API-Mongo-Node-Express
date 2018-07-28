@@ -7,7 +7,7 @@ const databaseService = require('../services/mongodbDatabaseService');
 const ParamAsserter = require("../utils/ParamAsserter");
 const PremiumContent = require("../services/PremiumContent");
 
-const pictureUpload = multer({dest: "/var/images"}).single("content");
+const pictureUpload = multer({dest: "/var/social-media/images"}).single("content");
 
 router.use(sessionService.assertSession.bind(sessionService));
 
@@ -19,8 +19,7 @@ router.post("/",
         .finally(next);
     },
     function(req, res, next){
-        let filepath = req.file ? req.file.path.slice(20) : null;
-        let newContent = new PremiumContent(filepath);
+        let newContent = new PremiumContent(req.file.filename);
 
         databaseService.addPremium(req.body.username, newContent)
         .then(()=>res.status(201).end())

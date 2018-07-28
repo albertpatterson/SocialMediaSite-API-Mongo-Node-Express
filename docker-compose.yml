@@ -17,7 +17,7 @@ services:
   depends_on:
     - database
   volumes:
-   - ./data/images:/var/images
+   - ./data/images:/var/social-media/images
 
  database:
   image: mongo
